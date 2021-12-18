@@ -28,4 +28,5 @@ disp('objective function at solution point:')
 fs = feval(fname,xs,D,muK)
 format short
 disp('number of iterations performed:')
+xs = reshape(xs,N1,K);
 k
