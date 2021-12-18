@@ -13,7 +13,7 @@
 % f: profile of softmax cost function values.
 % Prepared by W.-S. Lu, University of Victoria.
 % Last modofied: June 28, 2020.
-function [Ws,f] = SRMCC_bfgsML(Dtr,fname,gname,mu,K,iter)
+function [Ws,f,k] = SRMCC_bfgsML(Dtr,fname,gname,mu,K,epsi)
 N1 = size(Dtr,1);
 muK = [mu K];
 W0 = zeros(N1,K);
@@ -27,10 +27,13 @@ dk = -gk;
 ak = bt_lsearch2019(xk,dk,fname,gname,Dtr,muK);
 dtk = -ak*gk;
 xk_new = xk + dtk;
-fk = feval(fname,xk_new,Dtr,muK);
+fk_new = feval(fname,xk_new,Dtr,muK);
+dfk = abs(fk - fk_new);
+er = max(dfk,norm(dtk));
+fk = fk_new;
 f = [f; fk];
 fprintf('iter %1i: loss = %8.2e\n',k,fk)
-while k < iter
+while er >= epsi
   gk_new = feval(gname,xk_new,Dtr,muK);
   gmk = gk_new - gk;
   gk = gk_new;
@@ -47,7 +50,10 @@ while k < iter
   ak = bt_lsearch2019(xk,dk,fname,gname,Dtr,muK);
   dtk = ak*dk;
   xk_new = xk + dtk;
-  fk = feval(fname,xk_new,Dtr,muK);
+  fk_new = feval(fname,xk_new,D,muK);
+  dfk = abs(fk - fk_new);
+  er = max(dfk,norm(dtk));
+  fk = fk_new;
   f = [f; fk];
   k = k + 1;
   fprintf('iter %1i: loss = %8.2e\n',k,fk)
