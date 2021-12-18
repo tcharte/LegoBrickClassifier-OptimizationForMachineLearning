@@ -7,10 +7,10 @@ format long
 N1 = size(D,1);
 muK = [mu K];
 x0 = zeros(N1,K);
-n = length(x0);
+n = length(x0(:));
 I = eye(n);
 k = 1;
-xk = x0;
+xk = x0(:);
 Sk = I;
 fk = feval(fname,xk,D,muK);
 gk = feval(gname,xk,D,muK);
